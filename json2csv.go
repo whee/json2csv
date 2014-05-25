@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strconv"
 )
 
 func sortedKeys(m map[string]interface{}) []string {
@@ -21,7 +22,14 @@ func sortedKeys(m map[string]interface{}) []string {
 func printRow(w *csv.Writer, keys []string, d map[string]interface{}) error {
 	var record []string
 	for _, k := range keys {
-		record = append(record, d[k].(string))
+		switch f := d[k].(type) {
+		default:
+			log.Fatalf("Unsupported type %T. Aborting.\n", f)
+		case string:
+			record = append(record, f)
+		case float64:
+			record = append(record, strconv.FormatFloat(f, 'f', -1, 64))
+		}
 	}
 	return w.Write(record)
 }
