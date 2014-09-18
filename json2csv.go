@@ -27,12 +27,18 @@ func printRow(w *csv.Writer, keys []string, d map[string]interface{}) error {
 	var record []string
 	for _, k := range keys {
 		switch f := d[k].(type) {
-		default:
-			log.Fatalf("Unsupported type %T. Aborting.\n", f)
 		case string:
 			record = append(record, f)
 		case float64:
 			record = append(record, strconv.FormatFloat(f, 'f', -1, 64))
+		case bool:
+			if f {
+				record = append(record, "true")
+			} else {
+				record = append(record, "false")
+			}
+		default:
+			log.Fatalf("Unsupported type %T. Aborting.\n", f)
 		}
 	}
 	return w.Write(record)
